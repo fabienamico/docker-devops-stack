@@ -7,16 +7,16 @@ DevOps infrastructure stack with docker-compose (Jenkins, Selenium Grid with vid
 **https://github.com/whren/Selenium-Maven-Template/** : Sample Selenium source code used for selenium test case
 
 ## Jenkins master
-**jenkins-sudo** (port 8080) : Jenkins master container (to be build with Dockerfile)
+**jenkins-sudo** (port 8080) : Jenkins master container (to be built with Dockerfile)
 
 ## Jenkins slave
-**dind-jenkins-slave-sudo** : Slave container currently used by all active jobs (to be build with Dockerfile)
+**dind-jenkins-slave-sudo** : Slave container currently used by all active jobs (to be built with Dockerfile)
 
-**headless_selenium_jenkins_slave** : Headless selenium jenkins slave, referenced in jenkins configuration, not used currently (to be build with Dockerfile)
+**headless_selenium_jenkins_slave** : Headless selenium jenkins slave, referenced in jenkins configuration, not used currently (to be built with Dockerfile)
 
-**weblogic-base-domain-slave** : Weblogic admin server jenkins slave, referenced in jenkins configuration, not used currently (to be build with Dockerfile)
+**weblogic-base-domain-slave** : Weblogic admin server jenkins slave, referenced in jenkins configuration, not used currently (to be built with Dockerfile)
 
-**evarga/jenkins-slave** : Base jenkins slave, referenced in jenkins configuration, not used currently (to be build with Dockerfile)
+**evarga/jenkins-slave** : Base jenkins slave, referenced in jenkins configuration, not used currently (to be built with Dockerfile)
 
 ## Other containers
 **gibaholms/weblogic-base-domain:10.3.6** (port 7001) : On demand Weblogic admin server 10.3.6, used by jenkins jobs to build dependencies, deploy and run web tests
