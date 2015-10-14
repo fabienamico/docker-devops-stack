@@ -37,4 +37,4 @@ COPY config/org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditio
 COPY config/thinBackup.xml /usr/share/jenkins/ref/thinBackup.xml
 
 # Jenkins user
-COPY users/jenkins/config.xml /var/jenkins_home/users/jenkins/config.xml
+COPY users/jenkins/config.xml /usr/share/jenkins/ref/users/jenkins/config.xml
