@@ -5,9 +5,9 @@ nexus:
   ports:
     - "8081:8081"
 
-socat-docker:
+socat_docker:
   image: rancher/socat-docker
-  container_name: socat-docker
+  container_name: socat_docker
   volumes:
   - /var/run/docker.sock:/var/run/docker.sock
 
@@ -19,7 +19,7 @@ jenkins:
     - "8080:8080"
     - "50000:50000"
   links:
-    - socat-docker:socat-docker
+    - socat_docker:socat_docker
     - nexus:nexus
 #    - sonar:sonar
   volumes:
