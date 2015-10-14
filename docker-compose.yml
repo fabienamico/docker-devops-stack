@@ -1,0 +1,44 @@
+nexus:
+	build: ./nexus
+	container_name: nexus
+	restart: on-failure:10
+	ports:
+		- "8081:8081"
+
+jenkins:
+	build: ./jenkins
+	container_name: jenkins
+	restart: on-failure:10
+	ports:
+		- "8080:8080"
+		- "50000:50000"
+	links:
+		- nexus:nexus
+		- sonar:sonar
+ 	volumes:
+		- /mnt/sda1/data/jenkins:/var/jenkins_home
+	environment:
+		- JAVA_OPTS=-Duser.timezone=France/Paris
+		- JENKINS_PUBLIC_WEBHOOK_URL=http://www.chelsyn.com:8081/github-webhook/
+		- JENKINS_GITHUB_CREDENTIAL_ID=dc9ca099-424c-402b-873c-f7f402d7a44d
+		- JENKINS_GITHUB_CREDENTIAL_DESCRIPTION=GitHub (https://api.github.com) auto generated token credentials for Jenkins
+		- JENKINS_GITHUB_CREDENTIAL_SECRET=mD91yp5qV1pEZERENAo4CetuNveZ+hCwqzC6TizFfk6e45oUfcdwF9zkgYRCzYKDYYs1sSLlx2IWBQth4gcgBg==
+
+sonar:
+	build: ./sonar
+	container_name: sonar
+	restart: on-failure:10
+	ports:
+		- "9000:9000"
+		- "5432:5432"
+	environment:
+		- SONARQUBE_JDBC_URL=jdbc:postgresql://localhost:5432/sonar
+
+db:
+	image: postgres
+	net: container:sonar
+	container_name: postgres
+	restart: on-failure:10
+	environment:
+		- POSTGRES_USER=sonar
+		- POSTGRES_PASSWORD=sonar
