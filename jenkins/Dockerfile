@@ -7,7 +7,7 @@ RUN apt-get update \
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 USER jenkins
-COPY plugins.txt /var/jenkins_home/plugins.txt
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN /usr/local/bin/plugins.sh /usr/share/jenkins/ref/plugins.txt
 
 # Adding default Jenkins Jobs

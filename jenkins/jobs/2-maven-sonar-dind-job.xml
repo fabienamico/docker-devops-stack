@@ -30,9 +30,16 @@
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.13.3">
+    <jenkins.triggers.ReverseBuildTrigger>
       <spec></spec>
-    </com.cloudbees.jenkins.GitHubPushTrigger>
+      <upstreamProjects>1-maven-build-weblogic-dind-job</upstreamProjects>
+      <threshold>
+        <name>UNSTABLE</name>
+        <ordinal>1</ordinal>
+        <color>YELLOW</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <rootModule>
@@ -66,8 +73,7 @@
     </com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl>
   </publishers>
   <buildWrappers/>
-  <prebuilders>
-  </prebuilders>
+  <prebuilders/>
   <postbuilders/>
   <runPostStepsIfResult>
     <name>FAILURE</name>
