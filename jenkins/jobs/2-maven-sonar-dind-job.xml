@@ -64,6 +64,7 @@
     <com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl plugin="docker-plugin@0.15.0">
       <remove>true</remove>
     </com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl>
+  </publishers>
   <buildWrappers/>
   <prebuilders>
   </prebuilders>
