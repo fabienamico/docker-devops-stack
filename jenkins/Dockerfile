@@ -27,6 +27,7 @@ COPY config/config.xml /usr/share/jenkins/ref/config.xml
 COPY config/credentials.xml /usr/share/jenkins/ref/credentials.xml
 
 # Jenkins Settings, i.e. Maven, Groovy, ...
+COPY config/jenkins.model.JenkinsLocationConfiguration.xml /usr/share/jenkins/ref/jenkins.model.JenkinsLocationConfiguration.xml
 COPY config/github-plugin-configuration.xml /usr/share/jenkins/ref/github-plugin-configuration.xml
 COPY config/hudson.plugins.copyartifact.TriggeredBuildSelector.xml /usr/share/jenkins/ref/hudson.plugins.copyartifact.TriggeredBuildSelector.xml
 COPY config/hudson.plugins.groovy.Groovy.xml /usr/share/jenkins/ref/hudson.plugins.groovy.Groovy.xml

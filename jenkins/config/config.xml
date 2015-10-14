@@ -136,7 +136,7 @@
       <properties class="hudson.model.View$PropertyList"/>
       <gridBuilder class="au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder">
         <firstJob>1-maven-build-weblogic-dind-job</firstJob>
-        <firstJobLink>view/build_deploy_to_weblogic_test_on_selenium_grid_dind/job/1-maven-build-weblogic-dind-job/</firstJobLink>
+        <firstJobLink>job/1-maven-build-weblogic-dind-job</firstJobLink>
       </gridBuilder>
       <noOfDisplayedBuilds>10</noOfDisplayedBuilds>
       <buildViewTitle>Weblogic/Selenium DinD</buildViewTitle>
