@@ -111,7 +111,7 @@
           <pullStrategy>PULL_LATEST</pullStrategy>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
       </templates>
-      <serverUrl>http://192.168.0.132:2375</serverUrl>
+      <serverUrl>http://${DOCKERDEVOPSSTACK_SOCATDOCKER_1_PORT_2375_TCP_ADDR}:2375</serverUrl>
       <connectTimeout>0</connectTimeout>
       <readTimeout>0</readTimeout>
       <credentialsId></credentialsId>

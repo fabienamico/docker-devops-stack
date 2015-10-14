@@ -5,6 +5,12 @@ nexus:
   ports:
     - "8081:8081"
 
+socat-docker:
+  image: rancher/socat-docker
+  container_name: socat-docker
+  volumes:
+  - /var/run/docker.sock:/var/run/docker.sock
+
 jenkins:
   build: ./jenkins
   container_name: jenkins
@@ -13,10 +19,13 @@ jenkins:
     - "8080:8080"
     - "50000:50000"
   links:
+    - socat-docker:socat-docker
     - nexus:nexus
 #    - sonar:sonar
   volumes:
     - /mnt/sda1/data/jenkins:/var/jenkins_home
+  env_file:
+    - .env
   environment:
     - JAVA_OPTS=-Duser.timezone=France/Paris
     - JENKINS_PUBLIC_WEBHOOK_URL=http://www.chelsyn.com:8081/github-webhook/
