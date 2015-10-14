@@ -23,8 +23,9 @@ job-dsl:latest
 github-api:latest
 github:latest
 plain-credentials:latest
-config-file-provider:latest
+config-file-provider:2.9.3
 token-macro:latest
 parameterized-trigger:latest
 clone-workspace-scm:latest
+jquery:latest
 build-pipeline-plugin:latest
