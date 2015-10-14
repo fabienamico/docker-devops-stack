@@ -28,4 +28,3 @@ config-file-provider:2.9.3
 token-macro:1.10
 parameterized-trigger:2.29
 clone-workspace-scm:0.6
-jquery:1.7.2-1
