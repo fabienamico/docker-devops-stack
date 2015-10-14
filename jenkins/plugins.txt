@@ -20,7 +20,6 @@ jobConfigHistory:latest
 plugin-usage-plugin:latest
 credentials:latest
 groovy:latest
-job-dsl:latest
 github-api:latest
 github:latest
 plain-credentials:latest
