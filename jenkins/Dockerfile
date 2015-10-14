@@ -8,7 +8,7 @@ RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 USER jenkins
 COPY plugins.txt /var/jenkins_home/plugins.txt
-RUN /usr/local/bin/plugins.sh /var/jenkins_home/plugins.txt
+RUN /usr/local/bin/plugins.sh /usr/share/jenkins/ref/plugins.txt
 
 # Adding default Jenkins Jobs
 COPY jobs/1-maven-build-weblogic-dind-job.xml /usr/share/jenkins/ref/jobs/1-maven-build-weblogic-dind-job/config.xml
@@ -37,4 +37,5 @@ COPY config/org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditio
 COPY config/thinBackup.xml /usr/share/jenkins/ref/thinBackup.xml
 
 # Jenkins user
+RUN mkdir -p /usr/share/jenkins/ref/users/jenkins
 COPY users/jenkins/config.xml /usr/share/jenkins/ref/users/jenkins/config.xml
