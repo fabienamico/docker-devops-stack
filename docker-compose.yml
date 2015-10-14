@@ -5,13 +5,12 @@ nexus:
   ports:
     - "8081:8081"
 
-socat_docker:
-  image: rancher/socat-docker
-  container_name: socat_docker
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-  expose:
-    - "2375"
+# https://github.com/jenkinsci/docker-plugin/issues/206
+#socat_docker:
+#  image: rancher/socat-docker
+#  container_name: socat_docker
+#  volumes:
+#    - /var/run/docker.sock:/var/run/docker.sock
 
 jenkins:
   build: ./jenkins
@@ -21,7 +20,7 @@ jenkins:
     - "8080:8080"
     - "50000:50000"
   links:
-    - socat_docker:socat_docker
+#    - socat_docker:socat_docker
     - nexus:nexus
 #    - sonar:sonar
   volumes:
