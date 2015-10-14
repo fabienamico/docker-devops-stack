@@ -1,4 +1,4 @@
-config-file-provider:latest
+config-file-provider:2.9.3
 greenballs:latest
 flexible-publish:latest
 matrix-project:latest
@@ -20,6 +20,7 @@ jobConfigHistory:latest
 plugin-usage-plugin:latest
 credentials:latest
 groovy:latest
+job-dsl:latest
 github-api:latest
 github:latest
 plain-credentials:latest
