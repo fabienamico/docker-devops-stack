@@ -26,5 +26,5 @@
       <int>30</int>
     </entry>
   </mavenValidationLevels>
-  <localRepository class="hudson.maven.local_repo.DefaultLocalRepositoryLocator"/>
+  <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
 </hudson.maven.MavenModuleSet_-DescriptorImpl>
