@@ -15,7 +15,7 @@ jenkins:
   links:
     - nexus:nexus
     - sonar:sonar
-   volumes:
+  volumes:
     - /mnt/sda1/data/jenkins:/var/jenkins_home
   environment:
     - JAVA_OPTS=-Duser.timezone=France/Paris
