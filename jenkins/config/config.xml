@@ -69,7 +69,7 @@
           <configVersion>2</configVersion>
           <labelString>dind-jenkins-slave</labelString>
           <launcher class="com.nirima.jenkins.plugins.docker.launcher.DockerComputerSSHLauncher">
-            <sshConnector plugin="ssh-slaves@1.10">
+            <sshConnector plugin="ssh-slaves@1.9">
               <port>22</port>
               <credentialsId>e6d0ef43-714e-4ae1-8b9c-8f82302c044f</credentialsId>
               <jvmOptions></jvmOptions>
@@ -136,7 +136,7 @@
       <properties class="hudson.model.View$PropertyList"/>
       <gridBuilder class="au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder">
         <firstJob>1-maven-build-weblogic-dind-job</firstJob>
-        <firstJobLink>job/1-maven-build-weblogic-dind-job</firstJobLink>
+        <firstJobLink>job/1-maven-build-weblogic-dind-job/</firstJobLink>
       </gridBuilder>
       <noOfDisplayedBuilds>10</noOfDisplayedBuilds>
       <buildViewTitle>Weblogic/Selenium DinD</buildViewTitle>

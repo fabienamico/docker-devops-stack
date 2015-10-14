@@ -28,10 +28,12 @@ COPY config/credentials.xml /usr/share/jenkins/ref/credentials.xml
 
 # Jenkins Settings, i.e. Maven, Groovy, ...
 COPY config/jenkins.model.JenkinsLocationConfiguration.xml /usr/share/jenkins/ref/jenkins.model.JenkinsLocationConfiguration.xml
+COPY config/jenkins.mvn.GlobalMavenConfig.xml /usr/share/jenkins/ref/jenkins.mvn.GlobalMavenConfig.xml
 COPY config/github-plugin-configuration.xml /usr/share/jenkins/ref/github-plugin-configuration.xml
 COPY config/hudson.plugins.copyartifact.TriggeredBuildSelector.xml /usr/share/jenkins/ref/hudson.plugins.copyartifact.TriggeredBuildSelector.xml
 COPY config/hudson.plugins.groovy.Groovy.xml /usr/share/jenkins/ref/hudson.plugins.groovy.Groovy.xml
 COPY config/hudson.tasks.Maven.xml /usr/share/jenkins/ref/hudson.tasks.Maven.xml
+COPY config/hudson.maven.MavenModuleSet.xml /usr/share/jenkins/ref/hudson.maven.MavenModuleSet.xml
 COPY config/maven-global-settings-files.xml /usr/share/jenkins/ref/maven-global-settings-files.xml
 COPY config/org.jenkins_ci.plugins.flexible_publish.FlexiblePublisher.xml /usr/share/jenkins/ref/org.jenkins_ci.plugins.flexible_publish.FlexiblePublisher.xml
 COPY config/org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder.xml /usr/share/jenkins/ref/org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder.xml
