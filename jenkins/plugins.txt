@@ -1,5 +1,5 @@
-greenballs:latest
 config-file-provider:latest
+greenballs:latest
 flexible-publish:latest
 matrix-project:latest
 any-buildstep:latest
