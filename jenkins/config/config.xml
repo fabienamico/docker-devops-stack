@@ -101,7 +101,7 @@
               <list reference="../c"/>
             </extraHosts>
           </dockerTemplateBase>
-          <removeVolumes>false</removeVolumes>
+          <removeVolumes>true</removeVolumes>
           <pullStrategy>PULL_LATEST</pullStrategy>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
       </templates>
