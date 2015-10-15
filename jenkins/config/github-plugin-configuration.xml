@@ -3,10 +3,9 @@
   <configs>
     <github-server-config>
       <apiUrl>https://api.github.com</apiUrl>
-      <manageHooks>true</manageHooks>
+      <manageHooks>false</manageHooks>
       <credentialsId>${JENKINS_GITHUB_CREDENTIAL_ID}</credentialsId>
       <clientCacheSize>0</clientCacheSize>
     </github-server-config>
   </configs>
-  <hookUrl>${JENKINS_PUBLIC_WEBHOOK_URL}</hookUrl>
 </github-plugin-configuration>
