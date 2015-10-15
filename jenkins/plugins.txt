@@ -1,4 +1,5 @@
 config-file-provider:2.9.3
+ssh-credentials:1.11
 ssh-slaves:1.10
 greenballs:latest
 flexible-publish:latest
