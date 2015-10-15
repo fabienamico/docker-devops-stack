@@ -12,10 +12,9 @@ RUN /usr/local/bin/plugins.sh /usr/share/jenkins/ref/plugins.txt
 
 # Adding default Jenkins Jobs
 COPY jobs/1-maven-build-weblogic-dind-job.xml /usr/share/jenkins/ref/jobs/1-maven-build-weblogic-dind-job/config.xml
-COPY jobs/2-maven-sonar-dind-job.xml /usr/share/jenkins/ref/jobs/2-maven-sonar-dind-job/config.xml
 COPY jobs/2-deploy-to-weblogic-dind-job.xml /usr/share/jenkins/ref/jobs/2-deploy-to-weblogic-dind-job/config.xml
 COPY jobs/3-maven-tests-on-selenium-grid-dind-job.xml /usr/share/jenkins/ref/jobs/3-maven-tests-on-selenium-grid-dind-job/config.xml
-
+COPY jobs/4-maven-sonar-dind-job.xml /usr/share/jenkins/ref/jobs/4-maven-sonar-dind-job/config.xml
 
 ############################################
 # Configure Jenkins
