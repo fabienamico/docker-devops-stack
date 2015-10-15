@@ -25,6 +25,10 @@ COPY config/config.xml /usr/share/jenkins/ref/config.xml
 
 # Credentials
 COPY config/credentials.xml /usr/share/jenkins/ref/credentials.xml
+RUN mkdir -p /usr/share/jenkins/ref/secrets
+COPY secrets/master.key /usr/share/jenkins/ref/secrets/master.key
+COPY secrets/hudson.util.Secret /usr/share/jenkins/ref/secrets/hudson.util.Secret
+
 
 # Jenkins Settings, i.e. Maven, Groovy, ...
 COPY config/jenkins.model.JenkinsLocationConfiguration.xml /usr/share/jenkins/ref/jenkins.model.JenkinsLocationConfiguration.xml
