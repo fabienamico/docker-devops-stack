@@ -6,7 +6,7 @@ flexible-publish:latest
 matrix-project:latest
 any-buildstep:latest
 durable-task:latest
-docker-plugin:1.14.0
+docker-plugin:latest
 copyartifact:latest
 matrix-auth:latest
 conditional-buildstep:latest
