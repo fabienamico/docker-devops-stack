@@ -9,9 +9,9 @@
   <forceQuietModeTimeout>120</forceQuietModeTimeout>
   <cleanupDiff>false</cleanupDiff>
   <moveOldBackupsToZipFile>true</moveOldBackupsToZipFile>
-  <backupBuildResults>true</backupBuildResults>
+  <backupBuildResults>false</backupBuildResults>
   <backupBuildArchive>false</backupBuildArchive>
   <backupUserContents>false</backupUserContents>
-  <backupNextBuildNumber>true</backupNextBuildNumber>
+  <backupNextBuildNumber>false</backupNextBuildNumber>
   <backupBuildsToKeepOnly>false</backupBuildsToKeepOnly>
 </org.jvnet.hudson.plugins.thinbackup.ThinBackupPluginImpl>
