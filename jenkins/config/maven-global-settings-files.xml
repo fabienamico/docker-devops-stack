@@ -32,7 +32,7 @@
           &lt;/activation&gt;
           &lt;properties&gt;
               &lt;sonar.jdbc.url&gt;
-                jdbc:postgresql://sonar:5432/sonar
+                jdbc:postgresql://sonar-db:5432/sonar
               &lt;/sonar.jdbc.url&gt;
               &lt;sonar.jdbc.username&gt;sonar&lt;/sonar.jdbc.username&gt;
               &lt;sonar.jdbc.password&gt;sonar&lt;/sonar.jdbc.password&gt;
