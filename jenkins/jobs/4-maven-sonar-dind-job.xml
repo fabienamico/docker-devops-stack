@@ -32,7 +32,7 @@
   <triggers>
     <jenkins.triggers.ReverseBuildTrigger>
       <spec></spec>
-      <upstreamProjects>1-maven-build-weblogic-dind-job</upstreamProjects>
+      <upstreamProjects>3-maven-tests-on-selenium-grid-dind-job</upstreamProjects>
       <threshold>
         <name>UNSTABLE</name>
         <ordinal>1</ordinal>
