@@ -14,7 +14,7 @@
       &lt;!--This sends everything else to /public --&gt;
       &lt;id&gt;nexus&lt;/id&gt;
       &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
-      &lt;url&gt;http://172.17.0.7:8081/nexus/content/groups/public&lt;/url&gt;
+      &lt;url&gt;http://nexus:8081/nexus/content/groups/public&lt;/url&gt;
     &lt;/mirror&gt;
   &lt;/mirrors&gt;
   &lt;servers&gt;
@@ -32,12 +32,12 @@
           &lt;/activation&gt;
           &lt;properties&gt;
               &lt;sonar.jdbc.url&gt;
-                jdbc:postgresql://${DOCKERDEVOPSSTACK_SONAR_1_PORT_5432_TCP_ADDR}:${DOCKERDEVOPSSTACK_SONAR_1_PORT_5432_TCP_PORT}/sonar
+                jdbc:postgresql://sonar:5432/sonar
               &lt;/sonar.jdbc.url&gt;
               &lt;sonar.jdbc.username&gt;sonar&lt;/sonar.jdbc.username&gt;
               &lt;sonar.jdbc.password&gt;sonar&lt;/sonar.jdbc.password&gt;
               &lt;!-- Optional URL to server. Default value is http://localhost:9000 --&gt;
-              &lt;sonar.host.url&gt;http://${DOCKERDEVOPSSTACK_SONAR_1_PORT_5432_TCP_ADDR}:9000&lt;/sonar.host.url&gt;
+              &lt;sonar.host.url&gt;http://sonar:9000&lt;/sonar.host.url&gt;
           &lt;/properties&gt;
       &lt;/profile&gt;
       &lt;profile&gt;
@@ -47,7 +47,7 @@
       &lt;repositories&gt;
         &lt;repository&gt;
           &lt;id&gt;central&lt;/id&gt;
-          &lt;url&gt;http://central&lt;/url&gt;
+          &lt;url&gt;http://repo.maven.apache.org/maven2/&lt;/url&gt;
           &lt;releases&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
           &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
         &lt;/repository&gt;
@@ -55,7 +55,7 @@
      &lt;pluginRepositories&gt;
         &lt;pluginRepository&gt;
           &lt;id&gt;central&lt;/id&gt;
-          &lt;url&gt;http://central&lt;/url&gt;
+          &lt;url&gt;http://repo.maven.apache.org/maven2/&lt;/url&gt;
           &lt;releases&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
           &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
         &lt;/pluginRepository&gt;
