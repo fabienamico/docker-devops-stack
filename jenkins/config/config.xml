@@ -105,7 +105,7 @@
           <pullStrategy>PULL_LATEST</pullStrategy>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
       </templates>
-      <serverUrl>http://192.168.0.100:2375</serverUrl>
+      <serverUrl>http://192.168.0.125:2375</serverUrl>
       <connectTimeout>0</connectTimeout>
       <readTimeout>0</readTimeout>
       <credentialsId></credentialsId>
