@@ -3,10 +3,10 @@
 FROM hubot
 MAINTAINER Tanguy de Lignières, whren@free.fr
 
-ENV HUBOT_PORT 8088
+ENV HUBOT_PORT 8082
 ENV HUBOT_ADAPTER slack
 ENV HUBOT_NAME bot-name
-ENV HUBOT_SKYPE_USERNAME tanguy.de.lignieres
+ENV HUBOT_SKYPE_USERNAME xxxxxxxxxxxxxxxxxxxxx
 ENV HUBOT_SKYPE_PASSWORD xxxxxxxxxxxxxxxxxxxxx
 # default values
 ENV HUBOT_SKYPE_RECONNECT 240

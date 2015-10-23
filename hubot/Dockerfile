@@ -1,4 +1,4 @@
-# DOCKER-VERSION	1.6.2
+# DOCKER-VERSION	1.8.2
 
 FROM iojs:onbuild
-MAINTAINER Nathaniel Hoag, info@nathanielhoag.com
+MAINTAINER Tanguy de Lignières, whren@free.fr
