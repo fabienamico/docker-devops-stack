@@ -19,7 +19,7 @@
     "hubot-shipit": "^0.1.1",
     "hubot-slack": "^2.2.0",
     "hubot-youtube": "^0.1.2",
-    "hubot-skype-web": "^0.9.9"
+    "hubot-skype-over-phantomjs": "^0.2.0"
   },
   "engines": {
     "node": "0.10.x"
