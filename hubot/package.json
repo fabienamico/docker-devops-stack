@@ -2,7 +2,7 @@
   "name": "bot",
   "version": "0.0.1",
   "private": true,
-  "author": "nhoag",
+  "author": "whren",
   "description": "A simple helpful robot",
   "dependencies": {
     "hubot": "^2.9.3",
