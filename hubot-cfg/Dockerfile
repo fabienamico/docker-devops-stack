@@ -16,4 +16,4 @@ ENV PORT ${HUBOT_PORT}
 
 EXPOSE ${HUBOT_PORT}
 
-CMD bin/hubot
+CMD bin/hubot --adapter skype-web
