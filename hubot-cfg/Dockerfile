@@ -4,7 +4,7 @@ FROM hubot
 MAINTAINER Tanguy de Lignières, whren@free.fr
 
 ENV HUBOT_PORT 8082
-ENV HUBOT_ADAPTER hubot-skype-web
+ENV HUBOT_ADAPTER skype-web
 ENV HUBOT_NAME bot-name
 ENV HUBOT_SKYPE_USERNAME xxxxxxxxxxxxxxxxxxxxx
 ENV HUBOT_SKYPE_PASSWORD xxxxxxxxxxxxxxxxxxxxx
