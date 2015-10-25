@@ -19,7 +19,7 @@
     "hubot-shipit": "^0.1.1",
     "hubot-slack": "^2.2.0",
     "hubot-youtube": "^0.1.2",
-    "hubot-skype-web": "^0.9.9"
+    "hubot-skype-web": "git://github.com/whren/hubot-skype-web.git"
   },
   "engines": {
     "node": "0.10.x"
