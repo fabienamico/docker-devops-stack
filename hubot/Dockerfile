@@ -1,12 +1,21 @@
 # DOCKER-VERSION	1.8.2
 
-FROM iojs:onbuild
+FROM iojs:latest
 MAINTAINER Tanguy de Lignières, whren@free.fr
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 # Env
 ENV PHANTOMJS_VERSION 1.9.8
 
-# Commands
+RUN npm config delete proxy
+
+COPY package.json /usr/src/app/
+RUN npm install
+COPY . /usr/src/app
+
+# Install phantomJS Commands
 RUN apt-get update && \
  apt-get upgrade -y && \
  apt-get install -y vim git wget libfreetype6 libfontconfig bzip2 && \
@@ -24,3 +33,5 @@ RUN apt-get update && \
 
 
 RUN ["chmod", "+x", "/usr/src/app/bin/hubot"]
+
+CMD [ "npm", "start" ]
