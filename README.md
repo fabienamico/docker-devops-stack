@@ -4,12 +4,17 @@ DevOps infrastructure stack with docker-compose (Jenkins, Selenium Grid with vid
 ## ./.env file to be created
 
 Manually set DOCKER_HOST_IP before running docker-compose up
+
 DOCKER_HOST_IP : Docker Host Ip to be passed to jenkins instance in order for on demand slaves to be able to contact Docker Host.
 
 A try for jenkins user env vars to be used in credentials
+
 JENKINS_PUBLIC_WEBHOOK_URL
+
 JENKINS_GITHUB_CREDENTIAL_ID
+
 JENKINS_GITHUB_CREDENTIAL_DESCRIPTION
+
 JENKINS_GITHUB_CREDENTIAL_SECRET
 
 ## Linked repositories
