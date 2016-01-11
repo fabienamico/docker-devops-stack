@@ -37,10 +37,6 @@ def main():
         print("This must be run as root, aborting")
         return -1
 
-    # clean up any stale pid files
-    if os.path.exists("/var/run/squid3.pid"):
-        os.remove("/var/run/squid3.pid")
-
     max_object_size = os.getenv("MAXIMUM_CACHE_OBJECT", '1024')
     disk_cache_size = os.getenv("DISK_CACHE_SIZE", '5000')
     squid_directives_only = os.getenv("SQUID_DIRECTIVES_ONLY", False)
@@ -52,15 +48,12 @@ def main():
     squid_conf_entries.append('cache_dir ufs /var/cache/squid3 %s 16 256' %
                               disk_cache_size)
 
-    with open("/etc/squid3/squid.conf", 'w') as conf_fh:
-
-        if not squid_directives_only:
-            with open("/etc/squid3/squid.conf.in", "r") as preconf:
-                conf_fh.write(preconf.read())
-            for conf in squid_conf_entries:
+    write_mode = 'w' if squid_directives_only else 'a'
+    with open("/etc/squid3/squid.conf", write_mode) as conf_fh:
+        for conf in squid_conf_entries:
+            if not squid_directives_only:
                 print("Appending to squid.conf: [%s]" % conf)
                 conf_fh.write(conf + '\n')
-
         if arbitrary_squid_directives:
             print("Appending squid directives to squid.conf")
             print(arbitrary_squid_directives)
@@ -88,4 +81,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-

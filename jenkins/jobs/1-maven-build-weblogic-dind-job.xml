@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@2.12.1">
+  <actions/>
+  <description></description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.nirima.jenkins.plugins.docker.DockerJobProperty plugin="docker-plugin@0.15.0">
+      <tagOnCompletion>false</tagOnCompletion>
+      <additionalTag></additionalTag>
+      <pushOnSuccess>false</pushOnSuccess>
+      <cleanImages>true</cleanImages>
+    </com.nirima.jenkins.plugins.docker.DockerJobProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.13.3">
+      <projectUrl>https://github.com/whren/weblogic-maven-example/</projectUrl>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/whren/weblogic-maven-example</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>dind-jenkins-slave</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <rootModule>
+    <groupId>com.oracle.weblogic.examples.coherence</groupId>
+    <artifactId>coherence-scoping-examples</artifactId>
+  </rootModule>
+  <goals>clean install org.jacoco:jacoco-maven-plugin:0.7.4.201502262128:prepare-agent</goals>
+  <defaultGoals>install</defaultGoals>
+  <mavenName>Maven 2 - 2.2.1</mavenName>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <localRepository class="hudson.maven.local_repo.DefaultLocalRepositoryLocator"/>
+  <ignoreUpstremChanges>true</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <siteArchivingDisabled>false</siteArchivingDisabled>
+  <fingerprintingDisabled>false</fingerprintingDisabled>
+  <resolveDependencies>true</resolveDependencies>
+  <processPlugins>true</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>true</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+    <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+  </globalSettings>
+  <reporters/>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>**/weblogic-maven-plugin/*.*, **/wlfullclient/*.*</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+    </hudson.tasks.ArtifactArchiver>
+    <com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl plugin="docker-plugin@0.15.0">
+      <remove>true</remove>
+    </com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl>
+    <hudson.plugins.cloneworkspace.CloneWorkspacePublisher plugin="clone-workspace-scm@0.6">
+      <workspaceGlob></workspaceGlob>
+      <criteria>Any</criteria>
+      <archiveMethod>TAR</archiveMethod>
+      <overrideDefaultExcludes>false</overrideDefaultExcludes>
+    </hudson.plugins.cloneworkspace.CloneWorkspacePublisher>
+  </publishers>
+  <buildWrappers/>
+  <prebuilders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/sh
+
+# http://unix.stackexchange.com/a/161833
+#ssh -o StrictHostKeyChecking=no -t 127.0.0.1 &quot;sudo mkdir -p /u01/oracle/weblogic/wlserver_10.3/server/lib; sudo chown jenkins:jenkins /u01/oracle/weblogic/wlserver_10.3/server/lib&quot;
+
+echo Create directory to host weblogic.jar : /u01/oracle/weblogic/wlserver_10.3/server/lib
+sudo mkdir -p /u01/oracle/weblogic/wlserver_10.3/server/lib
+
+echo Change ownership to jenkins slave container user
+sudo chown jenkins:jenkins /u01/oracle/weblogic/wlserver_10.3/server/lib
+
+echo Start weblogic admin server container and get container id
+id=`docker run -dt gibaholms/weblogic-base-domain:10.3.6 /bin/bash`
+
+echo Copy weblogic.jar to current jenkins slave container
+docker cp $id:/u01/oracle/weblogic/wlserver_10.3/server/lib/weblogic.jar /u01/oracle/weblogic/wlserver_10.3/server/lib/weblogic.jar
+
+echo Build weblogic-maven-plugin.jar and extract pom.xml
+docker exec $id /bin/bash -c &quot;cd /u01/oracle/weblogic/wlserver_10.3/server/lib &amp;&amp; java -jar wljarbuilder.jar -profile weblogic-maven-plugin &amp;&amp; jar xvf /u01/oracle/weblogic/wlserver_10.3/server/lib/weblogic-maven-plugin.jar META-INF/maven/com.oracle.weblogic/weblogic-maven-plugin/pom.xml&quot;
+echo Create directory for weblogic-maven-plugin in current workspace jenkins slave container
+sudo mkdir -p ${WORKSPACE}/weblogic-maven-plugin
+echo Change ownership to jenkins slave container user
+sudo chown jenkins:jenkins ${WORKSPACE}/weblogic-maven-plugin
+echo Copy weblogic-maven-plugin.jar and its pom.xml from weblogic admin server container to current workspace jenkins slave container
+docker cp $id:/u01/oracle/weblogic/wlserver_10.3/server/lib/weblogic-maven-plugin.jar ${WORKSPACE}/weblogic-maven-plugin/weblogic-maven-plugin.jar
+docker cp $id:/u01/oracle/weblogic/wlserver_10.3/server/lib/META-INF/maven/com.oracle.weblogic/weblogic-maven-plugin/pom.xml ${WORKSPACE}/weblogic-maven-plugin/pom.xml
+
+echo Build wlfullclient.jar
+docker exec $id /bin/bash -c &quot;cd /u01/oracle/weblogic/wlserver_10.3/server/lib &amp;&amp; java -jar wljarbuilder.jar &amp;&amp; jar xvf /u01/oracle/weblogic/wlserver_10.3/server/lib/wlfullclient.jar META-INF/maven/com.oracle.weblogic/wlfullclient/pom.xml&quot;
+echo Create directory for wlfullclient in current workspace jenkins slave container
+sudo mkdir -p ${WORKSPACE}/wlfullclient
+echo Change ownership to jenkins slave container user
+sudo chown jenkins:jenkins ${WORKSPACE}/wlfullclient
+echo Copy wlfullclient.jar from weblogic admin server container to current workspace jenkins slave container
+docker cp $id:/u01/oracle/weblogic/wlserver_10.3/server/lib/wlfullclient.jar ${WORKSPACE}/wlfullclient/wlfullclient.jar
+
+echo Force remove of the weblogic admin server container $id
+docker rm -fv $id
+</command>
+    </hudson.tasks.Shell>
+  </prebuilders>
+  <postbuilders/>
+  <runPostStepsIfResult>
+    <name>FAILURE</name>
+    <ordinal>2</ordinal>
+    <color>RED</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>

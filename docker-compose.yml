@@ -1,0 +1,73 @@
+#squid:
+#    build: ./squid
+#    container_name: squid
+#    restart: on-failure:10
+#    environment:
+#        - "DISK_CACHE_SIZE=2048"
+#        - "MAX_CACHE_OBJECT=1024"
+#        # - "SQUID_DIRECTIVES_ONLY=true"
+#        # - "SQUID_DIRECTIVES='refresh_pattern . 0 0 1 refresh-ims'"
+#    net: "host"
+#    ## Uncomment and update /path/to/cache
+#    # volumes:
+#    #   - /path/to/cache:/var/cache/squid3
+
+#tproxy:
+#    build: ./iptables_docker
+#    container_name: tproxy
+#    restart: on-failure:10
+#    net: "host"
+#    privileged: true
+
+nexus:
+  build: ./nexus
+  container_name: nexus
+  restart: on-failure:10
+  ports:
+    - "8081:8081"
+
+# https://github.com/jenkinsci/docker-plugin/issues/206
+#socat_docker:
+#  image: rancher/socat-docker
+#  container_name: socat_docker
+#  volumes:
+#    - /var/run/docker.sock:/var/run/docker.sock
+
+jenkins:
+  build: ./jenkins
+  container_name: jenkins
+  restart: on-failure:10
+  ports:
+    - "8080:8080"
+    - "50000:50000"
+  links:
+#    - socat_docker:socat_docker
+    - nexus:nexus
+    - sonar:sonar
+  volumes:
+    - /mnt/sda1/data/jenkins:/var/jenkins_home
+  env_file:
+    - .env
+  environment:
+    - JAVA_OPTS=-Duser.timezone=France/Paris
+
+sonar:
+  build: ./sonar
+  container_name: sonar
+  restart: on-failure:10
+  ports:
+    - "9000:9000"
+#    - "5432:5432"
+  links:
+    - sonar-db:sonar-db
+  environment:
+    - SONARQUBE_JDBC_URL=jdbc:postgresql://sonar-db:5432/sonar
+
+sonar-db:
+  image: postgres
+  container_name: sonar-db
+#  net: container:sonar
+  restart: on-failure:10
+  environment:
+    - POSTGRES_USER=sonar
+    - POSTGRES_PASSWORD=sonar

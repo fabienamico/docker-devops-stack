@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.nirima.jenkins.plugins.docker.DockerJobProperty plugin="docker-plugin@0.15.0">
+      <tagOnCompletion>false</tagOnCompletion>
+      <additionalTag></additionalTag>
+      <pushOnSuccess>false</pushOnSuccess>
+      <cleanImages>true</cleanImages>
+    </com.nirima.jenkins.plugins.docker.DockerJobProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>dind-jenkins-slave</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>1-maven-build-weblogic-dind-job</upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.36.1">
+      <project>1-maven-build-weblogic-dind-job</project>
+      <filter>**/*.ear, **/*.war, **/weblogic-maven-plugin/weblogic-maven-plugin.jar, **/weblogic-maven-plugin/pom.xml, **/wlfullclient/wlfullclient.jar</filter>
+      <target></target>
+      <excludes></excludes>
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector"/>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Maven>
+      <targets>install:install-file -Dfile=${WORKSPACE}/weblogic-maven-plugin/weblogic-maven-plugin.jar -DpomFile=${WORKSPACE}/weblogic-maven-plugin/pom.xml</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Maven>
+      <targets>install:install-file -Dfile=${WORKSPACE}/wlfullclient/wlfullclient.jar -DgroupId=com.oracle.weblogic -DartifactId=weblogic -Dversion=10.3.6  -Dpackaging=jar</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Shell>
+      <command>#!/bin/sh
+
+DOCKER_WLS_CONTAINER_PORT=7001
+
+echo Start weblogic admin server container and get container id
+id=`docker run -d -p $DOCKER_WLS_CONTAINER_PORT:$DOCKER_WLS_CONTAINER_PORT --name=wlsadmin gibaholms/weblogic-base-domain:10.3.6 startWebLogic.sh`
+
+echo Get Docker host bridge ip
+ip=`/sbin/ip route|awk &apos;/default/ { print $3 }&apos;`
+
+echo Keep weblogic admin server container id and docker host bridge ip into properties file
+echo DOCKER_WLS_CONTAINER_ID=$id
+echo DOCKER_HOST_IP=$ip
+echo DOCKER_WLS_CONTAINER_PORT=$DOCKER_WLS_CONTAINER_PORT
+echo &quot;DOCKER_WLS_CONTAINER_ID=$id&quot; &gt; docker_wls_container.properties
+echo &quot;DOCKER_HOST_IP=$ip&quot; &gt;&gt; docker_wls_container.properties
+echo &quot;DOCKER_WLS_CONTAINER_PORT=$DOCKER_WLS_CONTAINER_PORT&quot; &gt;&gt; docker_wls_container.properties
+
+echo Wait for the weblogic admin server to become online
+if timeout 30 /bin/bash -c &quot;while ! timeout 1 /bin/bash -c \&quot;curl --output /dev/null --silent --head --fail \\\&quot;http://$ip:$DOCKER_WLS_CONTAINER_PORT/console\\\&quot;\&quot;; do sleep 10; done&quot;; then
+  echo &quot;Server up !&quot;
+else
+  echo &quot;Timeout occurs waiting the server to come online after 30s !&quot;
+fi
+</command>
+    </hudson.tasks.Shell>
+    <EnvInjectBuilder plugin="envinject@1.92.1">
+      <info>
+        <propertiesFilePath>docker_wls_container.properties</propertiesFilePath>
+      </info>
+    </EnvInjectBuilder>
+    <hudson.tasks.Maven>
+      <targets>com.oracle.weblogic:weblogic-maven-plugin:10.3.6.0:deploy -Dadminurl=t3://${DOCKER_HOST_IP}:${DOCKER_WLS_CONTAINER_PORT} -Dremote=true -Dupload=false -Duser=weblogic -Dpassword=welcome01 -Dtargets=AdminServer -Dlibrary=true -Dsource=/u01/oracle/weblogic/wlserver_10.3/common/deployable-libraries/jsf-2.0.war</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Maven>
+      <targets>com.oracle.weblogic:weblogic-maven-plugin:10.3.6.0:deploy -Dadminurl=t3://${DOCKER_HOST_IP}:${DOCKER_WLS_CONTAINER_PORT} -Dremote=true -Dupload=true -Duser=weblogic -Dpassword=welcome01 -Dtargets=AdminServer -Dsource=${WORKSPACE}/com.oracle.weblogic.demo/war-scoped/10.3.6/war-scoped-10.3.6.war</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Maven>
+      <targets>com.oracle.weblogic:weblogic-maven-plugin:10.3.6.0:deploy -Dadminurl=t3://${DOCKER_HOST_IP}:${DOCKER_WLS_CONTAINER_PORT} -Dremote=true -Dupload=true -Duser=weblogic -Dpassword=welcome01 -Dtargets=AdminServer -Dsource=${WORKSPACE}/com.oracle.weblogic.examples.coherence.ear-scoped/web-project/10.3.6/web-project-10.3.6.war</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Maven>
+      <targets>com.oracle.weblogic:weblogic-maven-plugin:10.3.6.0:deploy -Dadminurl=t3://${DOCKER_HOST_IP}:${DOCKER_WLS_CONTAINER_PORT} -Dremote=true -Dupload=true -Duser=weblogic -Dpassword=welcome01 -Dtargets=AdminServer -Dsource=${WORKSPACE}/com.oracle.weblogic.examples.coherence.ear-scoped/ear-project/10.3.6/ear-project-10.3.6.ear</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>docker_wls_container.properties</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+    </hudson.tasks.ArtifactArchiver>
+    <com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl plugin="docker-plugin@0.15.0">
+      <remove>true</remove>
+    </com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl>
+  </publishers>
+  <buildWrappers/>
+</project>

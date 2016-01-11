@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.nirima.jenkins.plugins.docker.DockerJobProperty plugin="docker-plugin@0.15.0">
+      <tagOnCompletion>false</tagOnCompletion>
+      <additionalTag></additionalTag>
+      <pushOnSuccess>false</pushOnSuccess>
+      <cleanImages>true</cleanImages>
+    </com.nirima.jenkins.plugins.docker.DockerJobProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.13.3">
+      <projectUrl>https://github.com/whren/Selenium-Maven-Template/</projectUrl>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/whren/Selenium-Maven-Template</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>dind-jenkins-slave</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>2-deploy-to-weblogic-dind-job</upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.36.1">
+      <project>2-deploy-to-weblogic-dind-job</project>
+      <filter>docker_wls_container.properties</filter>
+      <target></target>
+      <excludes></excludes>
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector"/>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <EnvInjectBuilder plugin="envinject@1.92.1">
+      <info>
+        <propertiesFilePath>docker_wls_container.properties</propertiesFilePath>
+      </info>
+    </EnvInjectBuilder>
+    <hudson.tasks.Shell>
+      <command>#!/bin/sh
+
+DOCKER_SEL_HUB_HOST_PORT=4444
+DOCKER_SEL_VNC_PORT=5920
+DOCKER_SEL_NOVNC_PORT=6080
+DOCKER_SEL_VIDEO_FILE=selenium_${BUILD_TAG}
+DOCKER_SEL_VIDEO_EXT=mkv
+DOCKER_SEL_COMMAND_LINE=&quot;docker run -d --name=grid-${BUILD_TAG} -p $DOCKER_SEL_HUB_HOST_PORT:24444 -p $DOCKER_SEL_VNC_PORT:25900 -p $DOCKER_SEL_NOVNC_PORT:26080 -e VNC_PASSWORD=vnc -e NOVNC=true -e VIDEO=true -e SCREEN_WIDTH=1024 -e SCREEN_HEIGHT=768 -e FFMPEG_FRAME_RATE=25 -e VIDEO_FILE_NAME=$DOCKER_SEL_VIDEO_FILE -e VIDEO_FILE_EXTENSION=$DOCKER_SEL_VIDEO_EXT -e FFMPEG_CODEC_ARGS= elgalu/selenium:latest&quot;
+
+echo Start selenium grid/node container and get container id
+id=`$DOCKER_SEL_COMMAND_LINE`
+
+echo Get docker host bridge ip
+ip=`/sbin/ip route|awk &apos;/default/ { print $3 }&apos;`
+
+echo Keep selenium grid/node container id and docker host bridge ip into properties file
+DOCKER_SEL_CONTAINER_ID=$id
+DOCKER_SEL_COMMAND_LINE=$DOCKER_SEL_COMMAND_LINE
+DOCKER_HOST_IP=$ip
+DOCKER_SEL_HUB_HOST_PORT=$DOCKER_SEL_HUB_HOST_PORT
+DOCKER_SEL_VNC_PORT=$DOCKER_SEL_VNC_PORT
+DOCKER_SEL_NOVNC_PORT=$DOCKER_SEL_NOVNC_PORT
+DOCKER_SEL_VIDEO_FILE=$DOCKER_SEL_VIDEO_FILE.$DOCKER_SEL_VIDEO_EXT
+echo DOCKER_SEL_CONTAINER_ID=$DOCKER_SEL_CONTAINER_ID
+echo DOCKER_SEL_COMMAND_LINE=$DOCKER_SEL_COMMAND_LINE
+echo DOCKER_HOST_IP=$DOCKER_HOST_IP
+echo DOCKER_SEL_HUB_HOST_PORT=$DOCKER_SEL_HUB_HOST_PORT
+echo DOCKER_SEL_VNC_PORT=$DOCKER_SEL_VNC_PORT
+echo DOCKER_SEL_NOVNC_PORT=$DOCKER_SEL_NOVNC_PORT
+echo DOCKER_SEL_VIDEO_FILE=$DOCKER_SEL_VIDEO_FILE
+echo &quot;#DOCKER_SEL_COMMAND_LINE=$DOCKER_SEL_COMMAND_LINE&quot; &gt; docker_sel_container.properties
+echo &quot;DOCKER_SEL_CONTAINER_ID=$DOCKER_SEL_CONTAINER_ID&quot; &gt;&gt; docker_sel_container.properties
+echo &quot;DOCKER_HOST_IP=$DOCKER_HOST_IP&quot; &gt;&gt; docker_sel_container.properties
+echo &quot;DOCKER_SEL_HUB_HOST_PORT=$DOCKER_SEL_HUB_HOST_PORT&quot; &gt;&gt; docker_sel_container.properties
+echo &quot;DOCKER_SEL_VNC_PORT=$DOCKER_SEL_VNC_PORT&quot; &gt;&gt; docker_sel_container.properties
+echo &quot;DOCKER_SEL_NOVNC_PORT=$DOCKER_SEL_NOVNC_PORT&quot; &gt;&gt; docker_sel_container.properties
+echo &quot;DOCKER_SEL_VIDEO_FILE=$DOCKER_SEL_VIDEO_FILE&quot; &gt;&gt; docker_sel_container.properties
+
+echo Wait for the selenium grid/node to become online
+docker exec $DOCKER_SEL_CONTAINER_ID wait_all_done 30s
+
+#echo Running maven for selenium tests
+#mvn clean verify -DseleniumGridURL=http://$DOCKER_HOST_IP:$DOCKER_SEL_HUB_HOST_PORT/wd/hub -Dremote=true -DbaseTestUrl=http://${DOCKER_HOST_IP}:${DOCKER_WLS_CONTAINER_PORT}/
+
+#echo Copy $DOCKER_SEL_VIDEO_FILE to current jenkins slave container
+#docker cp $DOCKER_SEL_CONTAINER_ID:/videos/$DOCKER_SEL_VIDEO_FILE ${WORKSPACE}/$DOCKER_SEL_VIDEO_FILE
+
+#echo Stopping and removing selenium grid/node container ${DOCKER_SEL_CONAINTER_ID}
+#docker rm -fv &lt; ${DOCKER_SEL_CONTAINER_ID}</command>
+    </hudson.tasks.Shell>
+    <EnvInjectBuilder plugin="envinject@1.92.1">
+      <info>
+        <propertiesFilePath>docker_sel_container.properties</propertiesFilePath>
+      </info>
+    </EnvInjectBuilder>
+    <hudson.tasks.Maven>
+      <targets>clean verify -DseleniumGridURL=http://$DOCKER_HOST_IP:$DOCKER_SEL_HUB_HOST_PORT/wd/hub -Dremote=true -DbaseTestUrl=http://${DOCKER_HOST_IP}:${DOCKER_WLS_CONTAINER_PORT}/</targets>
+      <mavenName>Maven 2 - 2.2.1</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider" plugin="config-file-provider@2.9.3">
+        <settingsConfigId>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1435422191538</settingsConfigId>
+      </globalSettings>
+    </hudson.tasks.Maven>
+  </builders>
+  <publishers>
+    <org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher plugin="flexible-publish@0.15.2">
+      <publishers>
+        <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+          <condition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.0"/>
+          <publisherList>
+            <hudson.tasks.Shell>
+              <command>#!/bin/sh
+
+echo Stop video recording
+docker exec $DOCKER_SEL_CONTAINER_ID /bin-utils/stop-video
+
+echo Copy $DOCKER_SEL_VIDEO_FILE to current jenkins slave container
+docker cp $DOCKER_SEL_CONTAINER_ID:/videos/$DOCKER_SEL_VIDEO_FILE ${WORKSPACE}/$DOCKER_SEL_VIDEO_FILE
+
+echo Stopping and removing selenium grid/node container $DOCKER_SEL_CONAINTER_ID
+docker rm -fv $DOCKER_SEL_CONTAINER_ID
+
+echo Stopping and removing weblogic admin server container $DOCKER_WLS_CONAINTER_ID
+docker rm -fv $DOCKER_WLS_CONTAINER_ID
+#rm docker_wls_container.properties</command>
+            </hudson.tasks.Shell>
+          </publisherList>
+          <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$RunUnstable" plugin="run-condition@1.0"/>
+          <executionStrategy class="org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy"/>
+        </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+      </publishers>
+    </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>**/failsafe-reports/**, **/screenshots/**, **/*${BUILD_TAG}.*</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>false</defaultExcludes>
+    </hudson.tasks.ArtifactArchiver>
+    <com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl plugin="docker-plugin@0.15.0">
+      <remove>true</remove>
+    </com.nirima.jenkins.plugins.docker.publisher.DockerPublisherControl>
+  </publishers>
+  <buildWrappers/>
+</project>
