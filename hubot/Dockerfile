@@ -10,6 +10,8 @@ WORKDIR /usr/src/app
 ENV PHANTOMJS_VERSION 1.9.8
 
 RUN npm config delete proxy
+RUN npm config delete http_proxy
+RUN npm config delete https_proxy
 
 COPY package.json /usr/src/app/
 RUN npm install
